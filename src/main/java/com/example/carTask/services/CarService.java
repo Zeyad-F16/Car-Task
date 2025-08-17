@@ -42,9 +42,13 @@ public class CarService {
         return carsList;
     }
 
-    public Optional<Car> getById(int id) {
-        return carsList.stream().filter(c -> c.getModelId() == id).findFirst();
+    public Car getById(int id) {
+        return carsList.stream()
+                .filter(c -> c.getModelId() == id)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Car with id " + id + " not found"));
     }
+
 
     public Car getMostExpensive() {
         return carsList.stream().max(Comparator.comparingDouble(Car::getPrice)).orElse(null);
@@ -54,9 +58,19 @@ public class CarService {
         carsList.add(car);
     }
 
-    public boolean deleteById(int id) {
-        return carsList.removeIf(c -> c.getModelId() == id);
+    public String deleteCar(int id) {
+        Optional<Car> car = carsList.stream()
+                .filter(c -> c.getModelId() == id)
+                .findFirst();
+
+        if (car.isPresent()) {
+            carsList.remove(car.get());
+            return "Car with id " + id + " deleted successfully";
+        } else {
+            return "Car with id " + id + " not found";
+        }
     }
+
 
     public List<Car> filterByModelName(String name) {
         return carsList.stream()

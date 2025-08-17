@@ -3,6 +3,8 @@ package com.example.carTask.controller;
 
 import com.example.carTask.models.Car;
 import com.example.carTask.services.CarService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,9 +29,15 @@ public class CarController {
     }
 
     @GetMapping("/{id}")
-    public Car getById(@PathVariable int id) {
-        return carService.getById(id).orElse(null);
+    public ResponseEntity<?> getCarById(@PathVariable int id) {
+        try {
+            Car car = carService.getById(id);
+            return ResponseEntity.ok(car);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
+
 
     @PostMapping
     public void addCar(@RequestBody Car car) {
@@ -37,9 +45,11 @@ public class CarController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteCar(@PathVariable int id) {
-        carService.deleteById(id);
+    public ResponseEntity<String> deleteCar(@PathVariable int id) {
+        String message = carService.deleteCar(id);
+        return ResponseEntity.ok(message);
     }
+
 
     @GetMapping("/search")
     public List<Car> filterByModelName(@RequestParam String name) {
