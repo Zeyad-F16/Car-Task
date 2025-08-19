@@ -1,10 +1,11 @@
-package com.example.carTask.models;
+package com.example.carTask.services.Dto;
 
 import lombok.Data;
 
 @Data
-public class Make {
-    private int id;
+public class Details {
+
+    private long id;
     private String nameAr;
     private String nameEn;
 }

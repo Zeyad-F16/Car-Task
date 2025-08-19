@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  # MariaDB Database Service
+  db:
+    image: mariadb:10.6
+    container_name: mariadb_db
+    environment:
+      MYSQL_ROOT_PASSWORD: your_strong_password
+      MYSQL_DATABASE: carShow
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  # Spring Boot Application Service
+  app:
+    build: .
+    container_name: car_task_app
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mariadb://db:3306/carShow
+      - SPRING_DATASOURCE_USERNAME=user
+      - SPRING_DATASOURCE_PASSWORD=password
+    depends_on:
+      - db
+
+volumes:
+  db_data:
